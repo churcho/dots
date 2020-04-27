@@ -1,0 +1,56 @@
+{
+    "coc.source.file.ignoreHidden": false,
+
+    "diagnostic.infoSign":            "",
+    "diagnostic.hintSign":            "•",
+    "diagnostic.warningSign":         "»",
+    "diagnostic.errorSign":           "×",
+
+    "explorer.icon.expanded": "▾",
+    "explorer.icon.enableNerdfont": true,
+    "explorer.quitOnOpen": true,
+    "explorer.floating.width": -20,
+    "explorer.floating.height": -10,
+    "explorer.file.showHiddenFiles": true,
+    "explorer.openAction.strategy": "sourceWindow",
+
+    "explorer.keyMappings": {
+        "s"       : "open:split",
+        "S"       : "open:split:plain",
+        "b"       : "open:split",
+        "B"       : "open:split:plain",
+        "v"       : "open:vsplit",
+        "<up>"    : "nodePrev",
+        "<down>"  : "nodeNext",
+        "<left>"  : "collapse",
+        "<right>" : ["expandable?", "expand", "open"]
+    },
+
+    "languageserver": {
+        "ccls": {
+            "command": "ccls",
+            "filetypes": [
+                "c",
+                "cpp",
+                "objc",
+                "objcpp"
+            ],
+            "rootPatterns": [
+                ".ccls",
+                "compile_commands.json",
+                ".vim/",
+                ".git/",
+                ".hg/"
+            ],
+            "initializationOptions": {
+                "cache": {
+                    "directory": "/tmp/ccls"
+                }
+            }
+        },
+        "lua": {
+            "command": "lua-lsp",
+            "filetypes": ["lua"]
+        }
+    }
+}
