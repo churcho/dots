@@ -216,6 +216,7 @@ nmap <leader>nf :CocCommand explorer --preset floating<CR>
 nmap <silent> ; :Denite buffer<CR>
 nmap <leader>m :Denite mark<CR>
 nmap <leader>j :Denite jump<CR>
+nmap <leader>J :Denite change<CR>
 nmap <leader>b :Denite buffer<CR>i
 nmap <leader>w :DeniteBufferDir file/rec<CR>
 nnoremap <leader>f :<C-u>Denite grep:. -no-empty<CR>
