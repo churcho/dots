@@ -62,6 +62,10 @@ call plug#begin(stdpath('data') . '/plugged')
   " Denite
   Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
 
+  " LeaderF
+  Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
+  Plug 'Yggdroot/LeaderF-marks'
+
   " Intellisense Engine
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
@@ -79,9 +83,23 @@ call plug#end()
 " {{{ Plugin Settings
 "
 
+" coc.nvim note regarding workspace folders:
+" https://github.com/neoclide/coc.nvim/wiki/Using-workspaceFolders
+" we must set the  "coc.preferences.rootPatterns" in coc-settings
+" to help coc decide which is workspace folder if the pattern exists
+" the default settings considers every folder with ".git" a workspace
+" to support Lua linting in a non git folder I added ".luacheckrc" to
+" the list of rootPatterns, this made it possible to send the correct
+" info to lua-lsp so that it would load .luacheckrc for luacheck
+" to see the list of loaded root patterns use:
+" :echo coc#util#root_patterns()
+" to see the current list of workspace folders:
+" :CocList folders
+
 " coc.vim will install any missing extensions
 let g:coc_global_extensions = [
       \ "coc-explorer",
+      \ "coc-lua",
   \]
 
 let g:coc_explorer_global_presets = {
@@ -116,6 +134,32 @@ let g:mkdp_auto_close = 0
 
 " previm
 let g:previm_open_cmd = 'firefox'
+
+" LeaderF settings
+" don't show the help in normal mode
+let g:Lf_HideHelp = 1
+let g:Lf_UseCache = 0
+let g:Lf_UseVersionControlTool = 0
+let g:Lf_IgnoreCurrentBufferName = 1
+let g:Lf_ShowRelativePath = 1
+let g:Lf_CursorBlink = 0
+let g:Lf_StlColorscheme = 'dark'
+let g:Lf_JumpToExistingWindow = 1
+" popup mode
+let g:Lf_WindowPosition = 'popup'
+let g:Lf_PopupPosition =  [1, 0]
+let g:Lf_PopupPreviewPosition = 'bottom'
+let g:Lf_PopupShowStatusline = 1
+let g:Lf_PreviewInPopup = 1
+let g:Lf_StlSeparator = { 'left': "\ue0b0", 'right': "\ue0b2", 'font': "Monospace" }
+let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0 }
+
+let g:Lf_RgConfig = [
+        \ "--max-columns=150",
+        \ "--glob=!git/*",
+        \ "--hidden"
+    \ ]
+
 
 
 " === Denite setup ==="

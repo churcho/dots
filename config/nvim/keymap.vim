@@ -45,8 +45,8 @@ cnoreabbrev Q q
 cnoreabbrev Qall qall
 
 " Beginning and end of line
-imap <C-a> <home>
-imap <C-e> <end>
+"imap <C-a> <home>
+"imap <C-e> <end>
 cmap <C-a> <home>
 cmap <C-e> <end>
 
@@ -205,22 +205,117 @@ nmap <leader>nd :CocCommand explorer --preset .nvim<CR>
 nmap <leader>nf :CocCommand explorer --preset floating<CR>
 
 
+" === LeaderF shorcuts === "
+"   ;          - Browse currently open buffers in normal mode
+"   <leader>fb - Browse currently open (b)uffers in insert mode
+"   <leader>w  - Browse files in current (w)orking directory
+"   <leader>fm - Browse current (m)arks (output of :marks)
+"   <leader>fc - Browse (c)ommand(:) history
+"   <leader>fs - Browse (s)earch history
+"   <leader>fh - Browse (h)elp terms
+"   <leader>fl - Search current file (l)ines
+"   <leader>fr - Browse most (r)ecent files
+"   <leader>fo - Browse c(o)lor schemes
+"   <leader>fi - Search current directory (i)nteractive mode
+"   <leader>fe - Search current directory for (e)xpression
+"   <leader>F  - Search current directory (empty expression)
+"   <leader>ff - Reuse previous rg search buffer
+"   <leader>fv - Search visually selected text literally
+"   <leader>fw - Search word under curosr in current buffer
+"   <leader>fW - Search word under curosr in current directory
+"   <leader>gg - Search word under curosr in current directory
+function! s:Leaderf(target, arg, statusline) abort
+  let g:Lf_PopupShowStatusline = a:statusline
+  return printf("%s %s", a:target,  a:arg)
+endfunction
+
+function! s:LeaderfRg(statusline) abort
+  let g:Lf_PopupShowStatusline = a:statusline
+  return leaderf#Rg#startCmdline(0, 0, 0, 0)
+endfunction
+
+" Override the default keybinds so they don't pollute our binds
+" we rebind <leader>ff and <leader>fb> anyways
+let g:Lf_ShortcutF = "<leader>ff"
+let g:Lf_ShortcutB = "<leader>fb"
+noremap ;          :<C-U><C-R>=<SID>Leaderf("Leaderf buffer", "", 0)<CR><CR><Tab>
+noremap <leader>fb :<C-U><C-R>=<SID>Leaderf("Leaderf buffer", "", 0)<CR><CR>
+noremap <leader>w  :<C-U><C-R>=<SID>Leaderf("Leaderf file", "", 1)<CR><CR><Tab>
+noremap <leader>fm :<C-U><C-R>=<SID>Leaderf("Leaderf marks", "", 0)<CR><CR><Tab>
+noremap <leader>fc :<C-U><C-R>=<SID>Leaderf("Leaderf cmdHistory", "", 0)<CR><CR>
+noremap <leader>fs :<C-U><C-R>=<SID>Leaderf("Leaderf searchHistory", "", 0)<CR><CR>
+noremap <leader>fh :<C-U><C-R>=<SID>Leaderf("Leaderf help", "", 0)<CR><CR>
+noremap <leader>fl :<C-U><C-R>=<SID>Leaderf("Leaderf line", "", 0)<CR><CR>
+noremap <leader>fr :<C-U><C-R>=<SID>Leaderf("Leaderf mru", "", 0)<CR><CR><Tab>
+noremap <leader>fo :<C-U><C-R>=<SID>Leaderf("Leaderf colorscheme", "", 0)<CR><CR><Tab>
+noremap <leader>fi :<C-U><C-R>=<SID>Leaderf("call leaderf#Rg#Interactive()", "", 1)<CR><CR>
+noremap <leader>fe :<C-U><C-R>=<SID>Leaderf("Leaderf rg -e", "", 1)<CR>
+noremap <leader>F  :<C-U><C-R>=<SID>Leaderf("Leaderf rg", "", 1)<CR><CR>
+noremap <leader>ff :<C-U><C-R>=<SID>Leaderf("Leaderf! rg --recall", "", 1)<CR><CR>
+noremap <leader>ft :<C-U><C-R>=<SID>Leaderf("Leaderf bufTag", "", 0)<CR><CR>
+noremap <leader>fv :<C-U><C-R>=<SID>Leaderf("Leaderf! rg -F -e", leaderf#Rg#visual(), 1)<CR><CR>
+noremap <leader>fw :<C-U><C-R>=<SID>Leaderf("Leaderf rg --current-buffer -e", expand("<cword>"), 1)<CR><CR><Tab>
+noremap <leader>fW :<C-U><C-R>=<SID>Leaderf("Leaderf rg", expand("<cword>"), 1)<CR><CR>
+noremap <leader>gg :<C-U><C-R>=<SID>LeaderfRg(1)<CR><CR>
+
+" rebind <C-j> and <C-k> for preview popup up/down
+" unfortuntaely couldn't find a way to do this globally
+let g:Lf_NormalMap = {
+        \ "_":      [["<C-j>", "<C-Down>"],
+        \            ["<C-k>", "<C-Up>"],
+        \            ["<C-c>", ":q<CR>"],
+        \            ["<Esc>", ":q<CR>"],
+        \            [";"    , ":q<CR>"],
+        \           ],
+        \ "File":   [["<C-k>", ':exec g:Lf_py "fileExplManager._toUpInPopup()"<CR>'],
+        \            ["<C-j>", ':exec g:Lf_py "fileExplManager._toDownInPopup()"<CR>']
+        \           ],
+        \ "Buffer": [["<C-k>", ':exec g:Lf_py "bufExplManager._toUpInPopup()"<CR>'],
+        \            ["<C-j>", ':exec g:Lf_py "bufExplManager._toDownInPopup()"<CR>']
+        \           ],
+        \ "Mru":    [["<C-k>", ':exec g:Lf_py "mruExplManager._toUpInPopup()"<CR>'],
+        \            ["<C-j>", ':exec g:Lf_py "mruExplManager._toDownInPopup()"<CR>']
+        \           ],
+        \ "Rg":     [["<C-k>", ':exec g:Lf_py "rgExplManager._toUpInPopup()"<CR>'],
+        \            ["<C-j>", ':exec g:Lf_py "rgExplManager._toDownInPopup()"<CR>']
+        \           ],
+        \ "Line":   [["<C-k>", ':exec g:Lf_py "lineExplManager._toUpInPopup()"<CR>'],
+        \            ["<C-j>", ':exec g:Lf_py "lineExplManager._toDownInPopup()"<CR>']
+        \           ],
+        \ "Marks":  [["<Tab>", ':exec g:Lf_py "marksExplManager.input()"<CR>'],
+        \            ["<C-k>", ':exec g:Lf_py "marksExplManager._toUpInPopup()"<CR>'],
+        \            ["<C-j>", ':exec g:Lf_py "marksExplManager._toDownInPopup()"<CR>']
+        \           ],
+        \}
+
+
 " === Denite shorcuts === "
-"   ;         - Browse currently open buffers in normal mode
-"   <leader>b - Browse currently open buffers in insert mode (filter)
-"   <leader>m - Browse current marks (output of :marks)
-"   <leader>j - Browse current jumplist (output of :jumps)
-"   <leader>w - Browse list of files in current directory
-"   <leader>f - Search current directory for occurences of given term and close window if no results
-"   <leader>g - Search current directory for occurences of word under cursor
-nmap <silent> ; :Denite buffer<CR>
-nmap <leader>m :Denite mark<CR>
-nmap <leader>j :Denite jump<CR>
-nmap <leader>J :Denite change<CR>
-nmap <leader>b :Denite buffer<CR>i
-nmap <leader>w :DeniteBufferDir file/rec<CR>
-nnoremap <leader>f :<C-u>Denite grep:. -no-empty<CR>
-nnoremap <leader>g :<C-u>DeniteCursorWord grep:.<CR>
+"   ;          - Browse currently open buffers in normal mode
+"   <leader>rb - Browse currently open buffers in insert mode (filter)
+"   <leader>rz - Reuse previous Denite buffer
+"   <leader>m  - Browse current marks (output of :marks)
+"   <leader>rm - Browse current marks (output of :marks)
+"   <leader>j  - Browse current jumplist (output of :jumps)
+"   <leader>J  - Browse current changelist (output of :changes)
+"   <leader>rj - Browse current jumplist (output of :jumps)
+"   <leader>rJ - Browse current changelist (output of :changes)
+"   <leader>re - (e)xplore files in current directory
+"   <leader>rf - Search current directory for occurences of given term and close window if no results
+"   <leader>rg - Search current directory for occurences of word under cursor
+"   <leader>rw - Search current directory for occurences of word under cursor
+"nmap <silent>;  :Denite buffer<CR>
+nmap <leader>rb :Denite buffer<CR>
+nmap <leader>rr :Denite -resume<CR>
+nmap <leader>m  :Denite mark<CR>
+nmap <leader>rm :Denite mark<CR>
+nmap <leader>j  :Denite jump<CR>
+nmap <leader>J  :Denite change<CR>
+nmap <leader>rj :Denite jump<CR>
+nmap <leader>rJ :Denite change<CR>
+nmap <leader>re :DeniteBufferDir file/rec<CR>
+nnoremap <leader>rf :<C-u>Denite grep:. -no-empty<CR>
+nnoremap <leader>rg :<C-u>DeniteCursorWord grep:.<CR>
+nnoremap <leader>rw :<C-u>DeniteCursorWord grep:.<CR>
 
 " Define mappings while in 'filter' mode
 "   <C-o> or <C-c>  - Switch to normal mode inside of search results
@@ -234,6 +329,8 @@ function! s:denite_filter_my_settings() abort
   imap <silent><buffer> <C-o>
   \ <Plug>(denite_filter_quit)
   imap <silent><buffer> <C-c>
+  \ <Plug>(denite_filter_quit)
+  imap <silent><buffer> <Tab>
   \ <Plug>(denite_filter_quit)
   inoremap <silent><buffer><expr> <Esc>
   \ denite#do_map('quit')
@@ -282,52 +379,50 @@ function! s:denite_my_settings() abort
   \ denite#do_map('open_filter_buffer')
   nnoremap <silent><buffer><expr> <C-o>
   \ denite#do_map('open_filter_buffer')
+  nnoremap <silent><buffer><expr> <Tab>
+  \ denite#do_map('open_filter_buffer')
 endfunction
 
 
 " === coc.nvim === "
-" F12    <leader>d    - Jump to definition of current symbol
-" S-F12  <leader>r    - Jump to references of current symbol
-"        <leader>y    - Jump to typedef of current symbol
-"        <leader>i    - Jump to implementation of current symbol
-"        <leader>cr   - Rename current word
+" F12    <leader>cd   - Jump to (d)efinition of current symbol
+" S-F12  <leader>cr   - Jump to (r)eferences of current symbol
+"        <leader>cy   - Jump to t(y)pedef of current symbol
+"        <leader>ci   - Jump to (i)mplementation of current symbol
+"        <leader>cR   - (R)ename current word
 "        <leader>.    - Code action current line
 "        <leader>,    - Autofix current line error
-"        <leader>a    - Code action selected region
-"                       ex: `<leader>aap` for current paragraph
-"        <leader>z    - Format selection region
+"        <leader>cz   - Code action selected region
+"                       ex: `<leader>czap` for current paragraph
+"        <leader>cf   - Format selection region
 "        <leader>cx   - List all Coc commands
-"        <leader>F    - Fuzzy search current project symbols
-"        <leader>cf   - Fuzzy search current project symbols
-"        <leader>S    - Fuzzy search current document symbols 
-"        <leader>cs   - Fuzzy search current document symbols 
+"        <leader>cs   - Fuzzy search current project symbols
+"        <leader>cS   - Fuzzy search current document symbols 
 "        <leader>ca   - Show all project diagnostics
+"        <leader>cc   - Resume last Coc action
 "        <leader>C    - Resume last Coc action
-"        <leader>x    - Resume last Coc action
 "       `[c` | `]c`   - diagnostics next/prev
 "        <leader>-/   - show documentation in preview window
 "        <leader>-?   - show func signature in preview window
 nmap <F12>      <Plug>(coc-definition)
 nmap <S-F12>    <Plug>(coc-references)
-nmap <leader>d  <Plug>(coc-definition)
-nmap <leader>r  <Plug>(coc-references)
-nmap <leader>y  <Plug>(coc-type-definition)
-nmap <leader>i  <Plug>(coc-implementation)
-nmap <leader>cr <Plug>(coc-rename)
+nmap <leader>cd <Plug>(coc-definition)
+nmap <leader>cr <Plug>(coc-references)
+nmap <leader>cy <Plug>(coc-type-definition)
+nmap <leader>ci  <Plug>(coc-implementation)
+nmap <leader>cR <Plug>(coc-rename)
 nmap <leader>.  <Plug>(coc-codeaction)
 nmap <leader>,  <Plug>(coc-fix-current)
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
-xmap <leader>z  <Plug>(coc-format-selected)
-nmap <leader>z  <Plug>(coc-format-selected)
+xmap <leader>cz <Plug>(coc-codeaction-selected)
+nmap <leader>cz <Plug>(coc-codeaction-selected)
+xmap <leader>cf <Plug>(coc-format-selected)
+nmap <leader>cf <Plug>(coc-format-selected)
 nnoremap <leader>cx :<C-u>CocList -N --normal --top commands<cr>
-nnoremap <leader>F  :<C-u>CocList -I -N --top symbols<CR>
-nnoremap <leader>cf :<C-u>CocList -I -N --top symbols<CR>
-nnoremap <leader>S  :<C-u>CocList -N --top outline<cr>
-nnoremap <leader>cs :<C-u>CocList -N --top outline<cr>
+nnoremap <leader>cs :<C-u>CocList -I -N --top symbols<CR>
+nnoremap <leader>cS :<C-u>CocList -N --top outline<cr>
 nnoremap <leader>ca :<C-u>CocList -N --top --normal diagnostics<cr>
+nnoremap <leader>cc :<C-u>CocListResume<CR>
 nnoremap <leader>C  :<C-u>CocListResume<CR>
-nnoremap <leader>x  :<C-u>CocListResume<CR>
 nmap <silent> [c <Plug>(coc-diagnostic-prev)
 nmap <silent> ]c <Plug>(coc-diagnostic-next)
 nnoremap <leader>? :call CocAction("showSignatureHelp")<CR>

@@ -1,5 +1,14 @@
 {
     "coc.source.file.ignoreHidden": false,
+    "coc.preferences.rootPatterns": [
+        ".git",
+        ".hg",
+        ".ccls",
+        ".vscode",
+        ".projections.json",
+        ".luacheckrc",
+        "compile_commands.json"
+    ],
 
     "diagnostic.infoSign":            "",
     "diagnostic.hintSign":            "•",
@@ -26,6 +35,9 @@
         "<right>" : ["expandable?", "expand", "open"]
     },
 
+    "lua.enable"      : "true",
+    "lua.commandPath" : "~/.config/coc/extensions/coc-lua-data/tools/bin/lua-lsp",
+
     "languageserver": {
         "ccls": {
             "command": "ccls",
@@ -50,7 +62,7 @@
         },
         "lua": {
             "command": "lua-lsp",
-            "filetypes": ["lua"]
+            "filetypes": ["_lua"]
         }
     }
 }

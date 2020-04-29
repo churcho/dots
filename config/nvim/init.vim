@@ -7,7 +7,7 @@ endif
 " actually scrap that, disable mouse everywhere
 if has('mouse')
   set mouse-=a
-endi
+endif
 
 colorscheme ibhagwan      " set our custom color scheme
 

@@ -20,6 +20,14 @@ augroup initvim-cpp
     \ signcolumn=yes cmdheight=2 " < for coc.vim
 augroup END
 
+" Lua
+augroup initvim-lua
+  au! BufNewFile,BufFilePre,BufRead *.lua set filetype=lua
+    \ expandtab shiftwidth=4 tabstop=4 softtabstop=4
+    \ colorcolumn=81 formatoptions+=croq
+    \ signcolumn=yes cmdheight=2 " < for coc.vim
+augroup END
+
 " markdown
 augroup initvim-md
   au! BufNewFile,BufFilePre,BufRead *.md set filetype=markdown

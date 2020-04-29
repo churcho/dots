@@ -31,7 +31,7 @@ hi SpellLocal          ctermfg=13    ctermbg=NONE  cterm=underline
 hi NonText             ctermfg=8
 hi LineNr              ctermfg=8     ctermbg=NONE  cterm=bold
 hi CursorLineNr        ctermfg=14    ctermbg=NONE  cterm=bold
-hi Visual              ctermfg=7     ctermbg=4
+hi Visual              ctermfg=7     ctermbg=12
 hi IncSearch           ctermfg=0     ctermbg=13    cterm=NONE
 hi Search              ctermfg=0     ctermbg=14
 hi StatusLine          ctermfg=7     ctermbg=4     cterm=bold
@@ -291,5 +291,63 @@ hi! link bladeParen      phpParent
 hi! link bladeEchoDelim  PreProc
 
 "}}}
+" LeaderF {{{
+let g:Lf_PopupPalette = {
+    \  'dark': {
+    \      'Lf_hl_popup_prompt':
+    \         { 'cterm': 'bold', 'ctermfg': '7', 'ctermbg': '4' },
+    \      'Lf_hl_popup_inputText':
+    \         { 'cterm': 'bold', 'ctermfg': '7', 'ctermbg': '4' },
+    \      'Lf_hl_popup_window':
+    \         { 'cterm': 'NONE', 'ctermfg': '7', 'ctermbg': '12' },
+    \      'Lf_hl_popup_blank':
+    \         { 'cterm': 'NONE', 'ctermfg': '7', 'ctermbg': '4' },
+    \      'Lf_hl_cursorline':
+    \         { 'cterm': 'bold', 'ctermfg': '7', 'ctermbg': 'NONE' },
+    \      'Lf_hl_popup_inputMode' :
+    \         { 'cterm': 'bold', 'ctermbg': '2', 'ctermfg': '8' },
+    \      'Lf_hl_popup_normalMode' :
+    \         { 'cterm': 'bold', 'ctermbg': '3', 'ctermfg': '8' },
+    \      'Lf_hl_popup_category' :
+    \         { 'cterm': 'bold', 'ctermbg': '0', 'ctermfg': '7' },
+    \      'Lf_hl_popup_nameOnlyMode' :
+    \         { 'cterm': 'bold', 'ctermbg': '3', 'ctermfg': '8' },
+    \      'Lf_hl_popup_fullPathMode' :
+    \         { 'cterm': 'bold', 'ctermbg': '4', 'ctermfg': '8' },
+    \      'Lf_hl_popup_fuzzyMode' :
+    \         { 'cterm': 'bold', 'ctermbg': '4', 'ctermfg': '8' },
+    \      'Lf_hl_popup_regexMode' :
+    \         { 'cterm': 'bold', 'ctermbg': '5', 'ctermfg': '8' },
+    \      'Lf_hl_popup_cwd' :
+    \         { 'cterm': 'NONE', 'ctermbg': '0', 'ctermfg': '7' },
+    \      'Lf_hl_popup_lineinfo' :
+    \         { 'cterm': 'NONE', 'ctermbg': '2', 'ctermfg': '8' },
+    \      'Lf_hl_popup_total' :
+    \         { 'cterm': 'NONE', 'ctermbg': '3', 'ctermfg': '8' },
+    \      'Lf_hl_selection':
+    \         { 'cterm': 'NONE', 'ctermbg': '2', 'ctermfg': '8' },
+    \      'Lf_hl_rgHighlight':
+    \         { 'cterm': 'NONE', 'ctermbg': '3', 'ctermfg': '8' },
+    \      'Lf_hl_gtagsHighlight':
+    \         { 'cterm': 'NONE', 'ctermbg': '3', 'ctermfg': '8' },
+    \      'Lf_hl_match'        : { 'cterm': 'bold', 'ctermfg': '1'  },
+    \      'Lf_hl_match0'       : { 'cterm': 'bold', 'ctermfg': '1'  },
+    \      'Lf_hl_match1'       : { 'cterm': 'bold', 'ctermfg': '2'  },
+    \      'Lf_hl_match2'       : { 'cterm': 'bold', 'ctermfg': '3'  },
+    \      'Lf_hl_match3'       : { 'cterm': 'bold', 'ctermfg': '13' },
+    \      'Lf_hl_match4'       : { 'cterm': 'bold', 'ctermfg': '12' },
+    \      'Lf_hl_marksTitle'   : { 'cterm': 'bold', 'ctermfg': '4'  },
+    \      'Lf_hl_marksLineCol' : { 'cterm': 'bold', 'ctermfg': '5'  },
+    \      'Lf_hl_marksText'    : { 'cterm': 'NONE', 'ctermfg': '2'  },
+    \      },
+    \  }
+"}}}
 
+"}}}
+" coc-nvim {{{
+hi CocErrorSign       ctermfg=9     ctermbg=NONE     cterm=bold
+hi CocWarningSign     ctermfg=3     ctermbg=NONE     cterm=bold
+hi CocInfoSign        ctermfg=10    ctermbg=NONE     cterm=bold
+hi CocHintSign        ctermfg=5     ctermbg=NONE     cterm=bold
+"}}}
 " vim: fdm=marker:sw=2:sts=2:et
