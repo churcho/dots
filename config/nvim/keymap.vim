@@ -217,7 +217,8 @@ nmap <leader>nf :CocCommand explorer --preset floating<CR>
 "   <leader>fr - Browse most (r)ecent files
 "   <leader>fo - Browse c(o)lor schemes
 "   <leader>fi - Search current directory (i)nteractive mode
-"   <leader>fe - Search current directory for (e)xpression
+"   <leader>fe - Search current buffer for (e)xpression
+"   <leader>fE - Search current directory for (e)xpression
 "   <leader>F  - Search current directory (empty expression)
 "   <leader>ff - Reuse previous rg search buffer
 "   <leader>fv - Search visually selected text literally
@@ -249,7 +250,8 @@ noremap <leader>fl :<C-U><C-R>=<SID>Leaderf("Leaderf line", "", 0)<CR><CR>
 noremap <leader>fr :<C-U><C-R>=<SID>Leaderf("Leaderf mru", "", 0)<CR><CR><Tab>
 noremap <leader>fo :<C-U><C-R>=<SID>Leaderf("Leaderf colorscheme", "", 0)<CR><CR><Tab>
 noremap <leader>fi :<C-U><C-R>=<SID>Leaderf("call leaderf#Rg#Interactive()", "", 1)<CR><CR>
-noremap <leader>fe :<C-U><C-R>=<SID>Leaderf("Leaderf rg -e", "", 1)<CR>
+noremap <leader>fe :<C-U><C-R>=<SID>Leaderf("Leaderf rg --current-buffer -e", "", 1)<CR>
+noremap <leader>fE :<C-U><C-R>=<SID>Leaderf("Leaderf rg -e", "", 1)<CR>
 noremap <leader>F  :<C-U><C-R>=<SID>Leaderf("Leaderf rg", "", 1)<CR><CR>
 noremap <leader>ff :<C-U><C-R>=<SID>Leaderf("Leaderf! rg --recall", "", 1)<CR><CR>
 noremap <leader>ft :<C-U><C-R>=<SID>Leaderf("Leaderf bufTag", "", 0)<CR><CR>
@@ -268,23 +270,29 @@ let g:Lf_NormalMap = {
         \            [";"    , ":q<CR>"],
         \           ],
         \ "File":   [["<C-k>", ':exec g:Lf_py "fileExplManager._toUpInPopup()"<CR>'],
-        \            ["<C-j>", ':exec g:Lf_py "fileExplManager._toDownInPopup()"<CR>']
+        \            ["<C-j>", ':exec g:Lf_py "fileExplManager._toDownInPopup()"<CR>'],
+        \            ["<ESC>", ':exec g:Lf_py "fileExplManager.quit()"<CR>']
         \           ],
         \ "Buffer": [["<C-k>", ':exec g:Lf_py "bufExplManager._toUpInPopup()"<CR>'],
-        \            ["<C-j>", ':exec g:Lf_py "bufExplManager._toDownInPopup()"<CR>']
+        \            ["<C-j>", ':exec g:Lf_py "bufExplManager._toDownInPopup()"<CR>'],
+        \            ["<ESC>", ':exec g:Lf_py "bufExplManager.quit()"<CR>']
         \           ],
         \ "Mru":    [["<C-k>", ':exec g:Lf_py "mruExplManager._toUpInPopup()"<CR>'],
-        \            ["<C-j>", ':exec g:Lf_py "mruExplManager._toDownInPopup()"<CR>']
+        \            ["<C-j>", ':exec g:Lf_py "mruExplManager._toDownInPopup()"<CR>'],
+        \            ["<ESC>", ':exec g:Lf_py "mruExplManager.quit()"<CR>']
         \           ],
         \ "Rg":     [["<C-k>", ':exec g:Lf_py "rgExplManager._toUpInPopup()"<CR>'],
-        \            ["<C-j>", ':exec g:Lf_py "rgExplManager._toDownInPopup()"<CR>']
+        \            ["<C-j>", ':exec g:Lf_py "rgExplManager._toDownInPopup()"<CR>'],
+        \            ["<ESC>", ':exec g:Lf_py "rgExplManager.quit()"<CR>']
         \           ],
         \ "Line":   [["<C-k>", ':exec g:Lf_py "lineExplManager._toUpInPopup()"<CR>'],
-        \            ["<C-j>", ':exec g:Lf_py "lineExplManager._toDownInPopup()"<CR>']
+        \            ["<C-j>", ':exec g:Lf_py "lineExplManager._toDownInPopup()"<CR>'],
+        \            ["<ESC>", ':exec g:Lf_py "lineExplManager.quit()"<CR>']
         \           ],
         \ "Marks":  [["<Tab>", ':exec g:Lf_py "marksExplManager.input()"<CR>'],
         \            ["<C-k>", ':exec g:Lf_py "marksExplManager._toUpInPopup()"<CR>'],
-        \            ["<C-j>", ':exec g:Lf_py "marksExplManager._toDownInPopup()"<CR>']
+        \            ["<C-j>", ':exec g:Lf_py "marksExplManager._toDownInPopup()"<CR>'],
+        \            ["<ESC>", ':exec g:Lf_py "marksExplManager.quit()"<CR>']
         \           ],
         \}
 

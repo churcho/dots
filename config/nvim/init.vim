@@ -130,14 +130,21 @@ if has('nvim')
 endif
 
 
-" Keybinds
-source ~/.config/nvim/keymap.vim
+" don't use our plugins and extended settings
+" if we're executing this from sudo/doas
+let id=system('id -u')
+if id != 0
 
-" Filetypes
-source ~/.config/nvim/filetypes.vim
+  " Keybinds
+  source ~/.config/nvim/keymap.vim
 
-" Plugins
-source ~/.config/nvim/plugins.vim
+  " Filetypes
+  source ~/.config/nvim/filetypes.vim
+
+  " Plugins
+  source ~/.config/nvim/plugins.vim
+
+endif
 
 " disable auto commenting, must be last line as plugins may overwrite
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
