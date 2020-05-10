@@ -8,6 +8,9 @@ The cheatsheet assumes at least minimal understanding of motions and operators, 
 
 Note that everything below works with vanilla vim/nvim and does not require the use of any plugins. I am not opposed to plugins and even use a few which I find extremely helpful but as a philosophy I try to use as much built-in functionality (with minimal keymap changes) as I can before turning to plugins. As you can see below there is **so much** you can do with vanilla Vim that I decided to leave plugins out of the scope of this document.
 
+**Thanks to [/u/-romainl-](https://www.reddit.com/user/-romainl-/) for [his great feedback](https://www.reddit.com/r/vim/comments/gha79v/i_wrote_an_advanced_comprehensive_cheatsheet_for/fq7qeop?utm_source=share&utm_medium=web2x) correcting previous inaccuracies.**
+
+
 ### Table of contents:
 
 - [Saving & Exiting Vim](#saving-exiting-vim)
@@ -109,7 +112,7 @@ o               " append (open) a new line below the current line
 O               " append (open) a new line above the current line
 ```
 
-**Note:** Any NORMAL mode operator can be run from INSERT mode by using `<alt+{op}>` or `<ctrl-o>{op}`. Alternatively, if we're in ex mode we can use `:norm {cmd}`. For example: say we want to append text at the end of the line we can simply press `<alt+A>` or `<ctrl-o>A` which will take us to the end of the line, all without leaving INSERT mode. The same can be achieved from ex mode with `<Esc>:norm A`, even though the latter isn't useful for this specific example it can be useful in many other cases where more complex commands are required (e.g. using the `global` command: `:g/regex/norm >>` will indent all lines matching the regex)
+**Note:** Any NORMAL mode operator can be run from INSERT mode by using `<ctrl-o>{op}` or `<alt+{op}>` (only works on some keyboards). Alternatively, if we're in ex mode we can use `:norm {cmd}`. For example: say we want to append text at the end of the line we can simply press `<alt+A>` or `<ctrl-o>A` which will take us to the end of the line, all without leaving INSERT mode. The same can be achieved from ex mode with `<Esc>:norm A`, even though the latter isn't useful for this specific example it can be useful in many other cases where more complex commands are required (e.g. using the `global` command: `:g/regex/norm >>` will indent all lines matching the regex)
 
 ## <a id="normal-mode-editing">NORMAL mode editing</a>
 ```vim
@@ -126,13 +129,13 @@ R               " enter REPLACE mode, cursor overwrites everything
 ~               " switch case a single character
 J               " join line below to the current one
 dd              " delete (cut) entire line 
-dw              " delete (cut) to the end of the current word
+dw              " delete (cut) to the next word
 cc              " change (replace) entire line
 cw              " change (replace) to the end of the current word
 caw             " change (replace) the current word (including spaces)
 ciw             " change (replace) the current word (not including spaces)
-ce              " change (replace) to the end of the next word
-cb              " change (replace) to the start of the previous word
+ce              " change (replace) forwards to the end of a word
+cb              " change (replace) backwards to the start of a word
 c0              " change (replace) to the start of the line
 c$              " change (replace) to the end of the line
 C               " change (replace) to the end of the line
@@ -150,7 +153,15 @@ vyxp            " transpose two letters (yank, delete and paste)
 **Notes:**
 - All (c)hange commands end with the editor in INSERT mode
 
-- All double-char commands (i.e. `dd`, `cc`, `yy`, etc) are essentially a shortcut to `0{operator}$`: `0: to go to the start of the line, {operator} of your choice and $ to go the end of the line`. This can also be combined with a {count} prefix, for example 2dd will delete 2 lines below. A similar result could also be achieved using the full expression of the operator and motion: `{operator}{count}{motion}`, i.e. `d1j` will delete 2 lines down (cursor line + 1 down) and `y2w` will yank 2 words forward. In similar fashion the VISUAL mode operator `v` can be used, e.g. `vi}` will visually select everything inside the curly braces.
+- All double-char commands (i.e. `dd`, `cc`, `yy`, etc) can be thought of as a shortcut to `0{operator}V$` (we use `<shift-v>` to switch to linewise VISUAL mode so that `$` will include the EOL), the breakdown is as follows:
+```vim
+    0           " go to the start of the line
+    {operator}  " {operator} of your choice
+    V           " enter linewise VISUAL mode
+    $           " go the end of the line
+```
+
+- The above can also be combined with a {count} prefix, for example 2dd will delete 2 lines below. A similar result could also be achieved using the full expression of the operator and motion: `{operator}{count}{motion}`, i.e. `d1j` will delete 2 lines down (cursor line + 1 down) and `y2w` will yank 2 words forward. In similar fashion the VISUAL mode operator `v` can be used, e.g. `vi}` will visually select everything inside the curly braces.
 
 ## <a id="cut-copy-and-paste">Cut, copy and paste</a>
 ```vim
@@ -160,13 +171,13 @@ yy              " yank (copy) a line
 {count}yy       " yank (copy) {count} lines
 yl              " yank a single character (l = to the right)
 vy              " yank a single character (using VISUAL mode)
-yw              " yank (copy) to the end of the current word
+yw              " yank (copy) to the next word
 yiw             " yank (copy) (i)nner word (entire word)
 yaw             " yank (copy) (a) word (entire word, including spaces
 y$              " yank (copy) to end of line
 dd              " delete (cut) a line
 {count}dd       " delete (cut) {count} lines
-dw              " delete (cut) to the end of the current word
+dw              " delete (cut) to the next word
 D               " delete (cut) to the end of the line
 d$              " delete (cut) to the end of the line
 d^              " delete (cut) to the first non-blank character of the line
@@ -223,7 +234,7 @@ i>              " inner single tag
 gn              " next occurrence of search pattern
 ```
 **Notes:**
-- Any motion or operation can be applied to any text object, e.g. `dit` will delete "some text" from `<a>some text</a>` and `yat` will copy the entire tag into the clipboard. For more information [Jared Caroll's: Vim Text Objects: The Definitive Guide](https://blog.carbonfive.com/vim-text-objects-the-definitive-guide/).
+- Text objects can be used with any operator, e.g. `dit` will delete "some text" from `<a>some text</a>` and `yat` will copy the entire tag into the clipboard. For more information [Jared Caroll's: Vim Text Objects: The Definitive Guide](https://blog.carbonfive.com/vim-text-objects-the-definitive-guide/).
 
 - `gn` is a very useful text object, few examples: `cgn` will change the next search pattern match, `vgn` will visually select all text from the cursor to the next match. For more information read [Bennet Hardwick's blog: 8 Vim tips and tricks for advanced beginners](https://bennetthardwick.com/blog/2019-01-06-beginner-advanced-vim-tips-and-tricks/).
 
@@ -231,18 +242,18 @@ gn              " next occurrence of search pattern
 ```vim
 <Esc>           " exit visual mode
 <ctrl-c>        " exit visual mode
-v               " start VISUAL mode, mark lines, then run a command (like y-yank)
+v               " start VISUAL mode in 'character' mode
 V               " start VISUAL mode in 'line' mode
 <ctrl-v>        " start VISUAL mode in 'block' mode
 o               " move to other end of marked area
 O               " move to other corner of block
-$               " mark to end of line (include newline)
-g_              " mark to end of line (exclude newline)
-aw              " mark a word
-ab              " a block with ()
-aB              " a block with {}
-ib              " inner block with ()
-iB              " inner block with {}
+$               " select to end of line (include newline)
+g_              " select to end of line (exclude newline)
+aw              " select a word
+ab              " select a block with ()
+aB              " select a block with {}
+ib              " select inner block with ()
+iB              " select inner block with {}
 gv              " NORMAL mode: reselect last visual selection
 ```
 
@@ -257,8 +268,8 @@ gv              " NORMAL mode: reselect last visual selection
 d               " delete
 c               " change
 y               " yank
->               " shift right 
-<               " shift left 
+>               " indent right 
+<               " indent left 
 !               " filter through external command 
 =               " filter through 'equalprg' option command 
 gq              " format lines to 'textwidth' length 
@@ -339,7 +350,7 @@ q                       " stop macro recording
 ```
 
 **Notes:**
-- Macros are essentially just keystrokes in a register, if you’re recording a macro and make a mistake, don’t start over, instead, undo it and keep going normally, using macro `q` as an example (recorded with `qq`), once you’re finished with the macro, press `"qp` to paste it to an empty line, remove the mistaken keystrokes and the undo and copy it back into the `q` register with `"qy$`.
+- Macros are essentially just a saved series of keystrokes, if you’re recording a macro and make a mistake, don’t start over, instead, undo it and keep going normally, using macro `q` as an example (recorded with `qq`), once you’re finished with the macro, press `"qp` to paste it to an empty line, remove the mistaken keystrokes and the undo and copy it back into the `q` register with `"qy$`.
 
 - Don’t leave undos in your macro. If you undo in a macro to correct a mistake, always be sure to manually remove the mistake and the undo from the macro. In replay mode, an undo will undo the entire macro up until that point, erasing all of your hard work and bleeding the macro out into the rest of your text.
 
@@ -358,7 +369,7 @@ m{a-z,A-Z}      " set mark at cursor position
 ## <a id="files-and-windows">Files and Windows</a>
 ```vim
 :e {file}       " edit a file in a new buffer
-:find {file}    " find and open file in :pwd (set path?)
+:find {file}    " find and open file in &path (set path?)
 gf              " find and open the file under the cursor
 :cd %:h         " change pwd to folder of current buffer (all buffers)
 :lcd %:h        " change pwd to folder of current buffer (local buffer)
@@ -370,7 +381,7 @@ gf              " find and open the file under the cursor
 :vsp {file}     " open a file in a new buffer and vertically split window
 :windo {ex}     " run :{ex} on all windows (e.g. :windo q - quits all windows)
 :bufdo {ex}     " same as above for buffers
-:on             " make current window the 'only' window (hide other buffers)
+:on             " make current window the 'only' window (close all others)
 <ctrl-w>o       " same as `:on` above
 <ctrl-w>w       " jump to next window
 <ctrl-w>r       " swap windows 
@@ -390,7 +401,7 @@ gf              " find and open the file under the cursor
 **Notes:**
 - `:bufdo` and `:windo` can be used for multiple file/window operations, for example to search and replace in all open buffers you can run `:bufdo %s/old/new/g`
 
-- `:find` and `gf` are both dependent on the current working directory (`:pwd`) and the `&path` variable, for said commands to be effective be sure to always open Vim from your project directory or use `cd` to change Vim's working directory (best done using `cd %:h`) and make sure `path` contains `**` in order to find files recursively. I personally define my path as: `set path=.,,,$PWD/**` (search current directory and project directory recursively).
+- `:find` and `gf` are both dependent on the `&path` variable which by default contains `.` which is the current working directory (`:pwd`), for said commands to be effective be sure to always open Vim from your project directory or use `cd` to change Vim's working directory (best done using `cd %:h`). If you would like `:find` and `gf` to find files recursively in all folders specified by `&path` be sure `path` contains `**`. Use `:set path+=**` if you wish to add `**` to the current `&path`. Personally, I define my path as: `set path=.,,,$PWD/**` (search current directory and project directory recursively).
 
 
 ## <a id="tabs">Tabs</a>
@@ -407,6 +418,13 @@ gT or :tabprev or :tabp     " goto to the previous tab
 ```
 
 ## <a id="term">Terminal</a>
+### Vim:
+```vim
+:term                       " open terminal window inside vim (default shell)
+:term zsh                   " open terminal window inside vim (zsh)
+:vert term zsh              " opens a new terminal in a horizontal split (zsh)
+```
+### Neovim:
 ```vim
 :term                       " open terminal window inside vim
 :split term://zsh           " opens a new terminal in a horizontal split
@@ -415,8 +433,9 @@ gT or :tabprev or :tabp     " goto to the previous tab
 :vnew term://bash           " alternates for above commands
 <ctrl-\> <ctrl-N>           " go back to NORMAL mode
 ```
+### Both:
 ```vim
-:<ctrl-z>                   " suspend vim to background, `fg` in term to resume
+<ctrl-z>                    " suspend vim to background, `fg` in term to resume
 :sus[pend][!] or st[op][!]  " suspend vim (equal to ctrl-z) if `!` is specified
                             " vim will write changes to all buffers before suspend
 ```
@@ -439,11 +458,10 @@ zg                          " add current word to dictionary
 :read {file}                " read {file} below the cursor
 :!{cmd}                     " execute shell command {cmd}
 :read !{cmd}                " read output of {cmd} below cursor
-:put={var}                  " put value of {var} into buffer
-<ctrl-r>={var}              " same as above for INSERT mode
-<ctrl-r>={expr}             " calculate and put value of {expr} (INSERT mode)
-:<ctrl-f> or q:             " enter extended command mode, <ctrl-c> or :q to exit
+:put={expr}                 " put value of {expr} into buffer
+<ctrl-r>={expr}             " same as above for INSERT mode
+:<ctrl-f> or q:             " enter command line window, <ctrl-c> or :q to exit
 q/ or q?                    " same as above but for searches
-:echo &{var}                " echo vim var to command line (expand values)
-:set {var}?                 " echo vim var to commend line (no expand)
+:echo &{opt}                " echo Vim option to command line (expand values)
+:set {opt}?                 " echo Vim option to commend line (no expand)
 ```
