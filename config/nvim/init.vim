@@ -29,7 +29,22 @@ if has('nvim')
   highlight PmenuSel blend=0
 
   " Make sure the terminal buffer has no numbers and no sign column
-  autocmd TermOpen * :setlocal signcolumn=no nonumber norelativenumber
+  " Always open on insert mode
+  augroup initvim-term
+    autocmd!
+    autocmd TermOpen * :setlocal signcolumn=no nonumber norelativenumber
+    autocmd TermOpen term://* startinsert
+    autocmd BufLeave term://* stopinsert
+  augroup END
+  " <Esc> for normal mode
+  " <C-o> to jump back
+  " <C-r> to simulate i-<C-r> (expression register)
+  tnoremap <Esc> <C-\><C-n>
+  tnoremap <C-o> <C-\><C-n><C-o>
+  tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
+  " Shortcut commands for term splits
+  command! -nargs=* T split | terminal <args>
+  command! -nargs=* VT vsplit | terminal <args>
 endif
 
 " Enable 24 bit colors if we can
@@ -65,7 +80,12 @@ set wrap breakindent    " start wrapped lines indented
 set linebreak           " do not break words on wrap
 
 " default <tab> behavior
-set expandtab smarttab tabstop=2 softtabstop=2 shiftwidth=2
+set tabstop=2           " Tab indentation levels every two columns
+set softtabstop=2       " Tab indentation when mixing tabs & spaces
+set shiftwidth=2        " Indent/outdent by two columns
+set shiftround          " Always indent/outdent to nearest tabstop
+set expandtab           " Convert all tabs that are typed into spaces
+set smarttab            " Use shiftwidths at left margin, tabstops everywhere else
 
 " searching
 set hlsearch            " highlight all text matching current search pattern
@@ -88,6 +108,17 @@ set clipboard=unnamedplus
 " text formatting
 set encoding=utf-8
 
+" hack to work around vim-plug auto install harmless error
+" due to `source $MYVIMRC | q` in SetupPlug()
+" 'Cannot make changes, 'modifiable' is off: fileencoding=utf-8'
+try
+  set fileencoding=utf-8
+catch
+endtry
+
+set noswapfile          " No swap files
+
+set path=.,,,$PWD/**    " recursive search when using :find
 set wildmenu            " visual autocomplete for the command menu
 set lazyredraw          " redraw only when we need to.
 set foldenable          " enable folding
@@ -104,7 +135,6 @@ set smartindent         " add <tab> depending on syntax (C/C++)
 " show menu even for one item do not auto select/insert
 " IMPORTANT: :help Ncm2PopupOpen for more information
  set completeopt=noinsert,menuone,noselect
-
 
 " recommended settings for coc.vim
 set hidden              " TextEdit might fail if hidden is not set.
@@ -129,6 +159,18 @@ if has('nvim')
   let g:python3_host_prog = '/usr/bin/python3'
 endif
 
+" Markdown fencing syntax
+" highlight fenced code blocks in markdown
+let g:markdown_fenced_languages = [
+      \ 'cpp',
+      \ 'html',
+      \ 'vim',
+      \ 'js=javascript',
+      \ 'json',
+      \ 'python',
+      \ 'sql',
+      \ 'bash=sh'
+      \ ]
 
 " don't use our plugins and extended settings
 " if we're executing this from sudo/doas
@@ -147,4 +189,13 @@ if id != 0
 endif
 
 " disable auto commenting, must be last line as plugins may overwrite
-autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+" this gets overwritten by `filetypes.vim` for ceratin types
+" c: Auto-wrap comments using textwidth, inserting the current comment
+" r:  Automatically insert the current comment leader after hitting
+"     <Enter> in Insert mode.
+" o: Automatically insert the current comment leader after hitting 'o' or
+"     'O' in Normal mode.
+augroup initvim-formatopts
+  autocmd!
+  autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+augroup END

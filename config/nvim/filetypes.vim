@@ -17,6 +17,7 @@ augroup initvim-cpp
   au! BufNewFile,BufFilePre,BufRead *.c,*.cpp set filetype=cpp
     \ expandtab shiftwidth=4 tabstop=4 softtabstop=4
     \ colorcolumn=81 formatoptions+=croq
+    \ path+=/usr/include,/usr/local/include
     \ signcolumn=yes cmdheight=2 " < for coc.vim
 augroup END
 
@@ -33,6 +34,7 @@ augroup initvim-md
   au! BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
     \ expandtab shiftwidth=4 tabstop=4 softtabstop=4
     \ colorcolumn=81 formatoptions+=croq
+    \ spell spelllang=en_us
 augroup END
 
 " Python

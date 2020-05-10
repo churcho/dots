@@ -5,7 +5,7 @@
 nnoremap <Space> <nop>
 let mapleader ="\<Space>"
 
-" by default `d` is a "cut" and copies the text into the unnamed register
+" by default `d` is a "cut" and copies the text into the unnamed (*) register
 " which in our case is the clipboard, bind <space>-d to "real delete" op
 " we remap x,c and s to as "real delete" (i.e. no copy to register)
 " <space>-p paste over selected text in visual mode (no copy to register)
@@ -16,21 +16,27 @@ nnoremap <leader>v "+p
 xnoremap <leader>v "+p
 nnoremap <leader>s "*p
 xnoremap <leader>s "*p
-" s|ss|S is also mapped "real delete"
+" <space>-d|dd|D is mapped "real delete"
 " x|c do not copy deleted text to register
-nnoremap s <nop>
-nnoremap s "_d
-xnoremap s "_d
-nnoremap S "_D
-xnoremap S "_D
-nnoremap ss "_dd
+nnoremap <leader>d "_d
+nnoremap <leader>D "_D
+nnoremap <leader>dd "_dd
 nnoremap x "_x
-xnoremap x "_x
 nnoremap c "_c
-xnoremap c "_c
 nnoremap C "_C
-xnoremap C "_C
 nnoremap cc "_cc
+" Visual mode mappings, decided to comment `xc`
+" so I can use idioms like `vxp` to transpose chars
+" and `viwc[<c-r>+]` to surround objects ([])
+xnoremap <leader>d "_d
+xnoremap <leader>D "_D
+xnoremap <leader>x "_x
+"xnoremap c "_c
+"xnoremap C "_C
+" Map `Y` to copy to end of line
+" conistent with the behaviour of `C` and `D`
+nnoremap Y y$
+xnoremap Y <Esc>y$gv
 
 " Fix some common typos
 cnoreabbrev W! w!
@@ -60,20 +66,30 @@ vmap < <gv
 vmap > >gv
 
 " move along visual lines, not numbered ones
-nnoremap j gj
-nnoremap k gk
+" without interferring with {count}<down|up>
+nnoremap <expr> <Down> (v:count == 0 ? 'g<down>' : '<down>')
+vnoremap <expr> <Down> (v:count == 0 ? 'g<down>' : '<down>')
+nnoremap <expr> <Up> (v:count == 0 ? 'g<up>' : '<up>')
+vnoremap <expr> <Up> (v:count == 0 ? 'g<up>' : '<up>')
 nnoremap ^ g^
 nnoremap $ g$
-vnoremap j gj
-vnoremap k gk
 vnoremap ^ g^
 vnoremap $ g$
 
-" Shortcutting split navigation, saving a keypress:
-map <C-h> <C-w>h
-map <C-j> <C-w>j
-map <C-k> <C-w>k
-map <C-l> <C-w>l
+" Shortcutting split navigation
+" navigage windows from any mode
+tnoremap <A-h> <C-\><C-N><C-w>h
+tnoremap <A-j> <C-\><C-N><C-w>j
+tnoremap <A-k> <C-\><C-N><C-w>k
+tnoremap <A-l> <C-\><C-N><C-w>l
+inoremap <A-h> <C-\><C-N><C-w>h
+inoremap <A-j> <C-\><C-N><C-w>j
+inoremap <A-k> <C-\><C-N><C-w>k
+inoremap <A-l> <C-\><C-N><C-w>l
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+nnoremap <A-l> <C-w>l
 
 " more <C-w> split shortcuts
 " <space>-up    - max split height
@@ -332,6 +348,8 @@ nnoremap <leader>rw :<C-u>DeniteCursorWord grep:.<CR>
 "   <C-t>           - Open currently selected file in a new tab
 "   <C-v>           - Open currently selected file a vertical split
 "   <C-h>           - Open currently selected file in a horizontal split
+augroup DeniteFilter
+autocmd!
 autocmd FileType denite-filter call s:denite_filter_my_settings()
 function! s:denite_filter_my_settings() abort
   imap <silent><buffer> <C-o>
@@ -351,6 +369,7 @@ function! s:denite_filter_my_settings() abort
   inoremap <silent><buffer><expr> <C-h>
   \ denite#do_map('do_action', 'split')
 endfunction
+augroup END
 
 " Define mappings while in denite window
 "   <CR>        - Opens currently selected buffer
@@ -361,6 +380,8 @@ endfunction
 "   t           - Open currently selected buffer in a new tab
 "   v           - Open currently selected buffer in a vertical split
 "   b           - Open currently selected buffer in a horizontal split
+augroup Denite
+autocmd!
 autocmd FileType denite call s:denite_my_settings()
 function! s:denite_my_settings() abort
   nnoremap <silent><buffer><expr> <CR>
@@ -390,7 +411,7 @@ function! s:denite_my_settings() abort
   nnoremap <silent><buffer><expr> <Tab>
   \ denite#do_map('open_filter_buffer')
 endfunction
-
+augroup END
 
 " === coc.nvim === "
 " F12    <leader>cd   - Jump to (d)efinition of current symbol
@@ -435,6 +456,7 @@ nmap <silent> [c <Plug>(coc-diagnostic-prev)
 nmap <silent> ]c <Plug>(coc-diagnostic-next)
 nnoremap <leader>? :call CocAction("showSignatureHelp")<CR>
 nnoremap <leader>/ :call <SID>show_documentation()<CR>
+nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)

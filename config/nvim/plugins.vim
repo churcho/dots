@@ -32,7 +32,6 @@ if !filereadable(plugpath)
             echom "Error downloading vim-plug. Please install it manually.\n"
             exit
         endif
-        autocmd VimEnter * call SetupPlug()
     else
         echom "vim-plug not installed. Please install it manually or install curl.\n"
         exit
@@ -40,10 +39,13 @@ if !filereadable(plugpath)
 endif
 
 " Install missing plugins on startup
-autocmd VimEnter *
-  \  if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
-  \|   call SetupPlug()
-  \| endif
+augroup initvim-vimplug
+  autocmd!
+  autocmd VimEnter *
+    \  if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+    \|   call SetupPlug()
+    \| endif
+augroup END
 
 " Shortcut to upgrade all plugins, including Plug
 command! PU PlugUpdate | PlugUpgrade
@@ -59,6 +61,13 @@ call plug#begin(stdpath('data') . '/plugged')
   " `let g:suda_smart_edit=1` enables auto switch when target is not readable
   Plug 'lambdalisue/suda.vim'
 
+  " tpope's plugins that should be part of vim
+  Plug 'tpope/vim-surround'
+  Plug 'tpope/vim-repeat'
+
+  " Git integration
+  Plug 'tpope/vim-fugitive'
+
   " Denite
   Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
 
@@ -68,9 +77,6 @@ call plug#begin(stdpath('data') . '/plugged')
 
   " Intellisense Engine
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-  " Git integration
-  Plug 'tpope/vim-fugitive'
 
   " Markdown preview
   "Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }}
