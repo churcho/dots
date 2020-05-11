@@ -30,6 +30,7 @@ Note that everything below works with vanilla vim/nvim and does not require the 
 - [Terminal](#term)
 - [Spellcheck](#spellcheck)
 - [Misc Commands](#misc-commands)
+- [Ctrl-R and the Expression Register](#ctrl-r-and-the-expression-register)
 
 ## <a id="saving-exiting-vim">Saving & Exiting Vim</a>
 ```vim
@@ -127,7 +128,8 @@ X               " delete a single character (before cursor)
 r               " replace a single character
 R               " enter REPLACE mode, cursor overwrites everything
 ~               " switch case a single character
-J               " join line below to the current one
+J               " join line below to the current one (with space)
+gJ              " join line below to the current one (no space)
 dd              " delete (cut) entire line 
 dw              " delete (cut) to the next word
 cc              " change (replace) entire line
@@ -198,7 +200,7 @@ Copy paste using ex mode:
 ```
 
 **Notes:**
-- To paste a register directly from INSERT or ex mode use the expression register `<ctrl-r>` followed by a register. For more information how to use the expression register read [Aaron Bieber's: Master Vim Registers With Ctrl R](https://blog.aaronbieber.com/2013/12/03/master-vim-registers-with-ctrl-r.html).
+- To paste a register directly from INSERT or ex mode use `<ctrl-r>` followed by a register name.
 
 - By default the `Y` command is mapped to `yy` (yank line) which isn't consisnt with the behaviors of `C` and `D` (from cursor to end of line), a very useful mapping for both NORMAL and VISUAL mode is:
 
@@ -344,6 +346,7 @@ q{a-z}                  " start recording macro to register {a-z}
 q                       " stop macro recording
 @{a-z}                  " execute macro {a-z}
 {count}@{a-z}           " execute macro {a-z} on {count} lines
+@@                      " repeat execution of last macro
 :'<,'>normal @q         " execute macro `q` on visual selection
 "{a-z}p                 " paste macro {a-z} (register)
 "{a-z}y$                " yank into macro {a-z} to end of line
@@ -458,10 +461,35 @@ zg                          " add current word to dictionary
 :read {file}                " read {file} below the cursor
 :!{cmd}                     " execute shell command {cmd}
 :read !{cmd}                " read output of {cmd} below cursor
-:put={expr}                 " put value of {expr} into buffer
-<ctrl-r>={expr}             " same as above for INSERT mode
 :<ctrl-f> or q:             " enter command line window, <ctrl-c> or :q to exit
 q/ or q?                    " same as above but for searches
 :echo &{opt}                " echo Vim option to command line (expand values)
 :set {opt}?                 " echo Vim option to commend line (no expand)
 ```
+
+## <a id="ctrl-r-and-the-expression-register">Ctrl-R and the Expression Register</a>
+
+The expression register (`=`) is used to evaluate expressions and can be accessed using `"=` from NORMAL and VISUAL modes and  `<ctrl-r>` from INSERT and ex command modes, it is very useful to insert registers and other input into the command line or directly to the document when you don't want to leave INSERT mode (useful so you can repeat the entire edit with `.`):
+
+### INSERT and ex modes:
+```vim
+<Esc>:registers             " list registers and their values
+<Esc>:put={expr}            " put value of {expr}<cr> into buffer
+<ctrl-r>{reg}               " put register {reg}
+<ctrl-r>={expr}             " put the value of {expr}
+<ctrl-r>=[1,2,3]            " put 1<cr>2<cr>3<cr>
+:<ctrl-r><ctrl-w>           " put word under cursor
+:<ctrl-r><ctrl-a>           " put WORD under cursor (includes punctuation)
+:<ctrl-r><ctrl-l>           " put current cursor line
+:<ctrl-r><ctrl-f>           " put file path under cursor (does not expand ~)
+:<ctrl-r><ctrl-p>           " put file path under cursor (expands ~)
+```
+
+### NORMAL and VISUAL modes:
+```vim
+"={expr}                    " evaluate {expr} into the expression register
+"={expr}p                   " evaluate {expr} and paste (also saved in the register)
+"={expr}P                   " save as above, paste before the cursor
+```
+
+**NOTE:** For more information on evaluating expressions `:help expression`. For even more information read [Aaron Bieber's: Master Vim Registers With Ctrl R](https://blog.aaronbieber.com/2013/12/03/master-vim-registers-with-ctrl-r.html) and watch [Vimcasts: Simple calculations with Vim's expression register calculations with Vim's expression register](http://vimcasts.org/episodes/simple-calculations-with-vims-expression-register/)
