@@ -5,32 +5,33 @@
 nnoremap <Space> <nop>
 let mapleader ="\<Space>"
 
-" by default `d` is a "cut" and copies the text into the unnamed (*) register
-" which in our case is the clipboard, bind <space>-d to "real delete" op
-" we remap x,c and s to as "real delete" (i.e. no copy to register)
-" <space>-p paste over selected text in visual mode (no copy to register)
-" <space>-v and <space>-s are used to mimc term cmd-v and cmd-s pastes
+" by default `d` is a 'cut' operation into the unnamedplus (+) register
+" which in our case is the clipboard, bind <space>d to "real delete" op
+" <space>v and <space>s are used to mimc term cmd-v and cmd-s pastes
 " https://vim.fandom.com/wiki/Replace_a_word_with_yanked_text
-xnoremap <leader>p "_dP
 nnoremap <leader>v "+p
 xnoremap <leader>v "+p
 nnoremap <leader>s "*p
 xnoremap <leader>s "*p
-" <space>-d|dd|D is mapped "real delete"
+" <space>b as a shortcut to the 'blackhole' register
+" <space>d|dd|D is mapped "real delete"
 " x|c do not copy deleted text to register
+nnoremap <leader>b "_
 nnoremap <leader>d "_d
 nnoremap <leader>D "_D
 nnoremap <leader>dd "_dd
 nnoremap x "_x
-nnoremap c "_c
-nnoremap C "_C
-nnoremap cc "_cc
-" Visual mode mappings, decided to comment `xc`
-" so I can use idioms like `vxp` to transpose chars
+"nnoremap c "_c
+"nnoremap C "_C
+"nnoremap cc "_cc
+" Visual mode mappings
+" so we can use idioms like `vxp` to transpose chars
 " and `viwc[<c-r>+]` to surround objects ([])
-xnoremap <leader>d "_d
+xnoremap <leader>b "_
+xnoremap <leader>d "_D
 xnoremap <leader>D "_D
 xnoremap <leader>x "_x
+"xnoremap x "_x
 "xnoremap c "_c
 "xnoremap C "_C
 " Map `Y` to copy to end of line

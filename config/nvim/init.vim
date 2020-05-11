@@ -101,7 +101,7 @@ set wrapscan            " begin search from top of the file when nothng is found
 set cpoptions+=x        " stay at seach item when <esc>
 
 " vim clipboard copies to system clipboard
-" unnamed     = use the * register (cmd-s paste in our term)
+" unnamed     = use the " register (cmd-s paste in our term)
 " unnamedplus = use the + register (cmd-v paste in our term)
 set clipboard=unnamedplus
 
@@ -198,4 +198,12 @@ endif
 augroup initvim-formatopts
   autocmd!
   autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+augroup END
+
+" Sync syntax from the start of the file when opening a buffer
+" otherwise syntax highlight might get out of sync when scrolling
+" supposdely has some performance issues?
+augroup initvim-syncformat
+  autocmd!
+  autocmd BufEnter * :syntax sync fromstart
 augroup END

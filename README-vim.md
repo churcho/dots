@@ -112,6 +112,14 @@ A               " insert (append) at the end of the line
 o               " append (open) a new line below the current line
 O               " append (open) a new line above the current line
 ```
+### When in INSERT mode (most work also in ex mode):
+```vim
+<ctrl-u>        " delete to line start or delete newline (on empty lines)
+<ctrl-d>        " delete from start of line to first non-blank character
+<ctrl-y>        " put text from the above line column
+<ctrl-w>        " delete a word backwards
+<ctrl-r>{reg}   " put register {reg}
+```
 
 **Note:** Any NORMAL mode operator can be run from INSERT mode by using `<ctrl-o>{op}` or `<alt+{op}>` (only works on some keyboards). Alternatively, if we're in ex mode we can use `:norm {cmd}`. For example: say we want to append text at the end of the line we can simply press `<alt+A>` or `<ctrl-o>A` which will take us to the end of the line, all without leaving INSERT mode. The same can be achieved from ex mode with `<Esc>:norm A`, even though the latter isn't useful for this specific example it can be useful in many other cases where more complex commands are required (e.g. using the `global` command: `:g/regex/norm >>` will indent all lines matching the regex)
 
@@ -121,6 +129,7 @@ u               " undo
 U               " undo all changes to current line
 <ctrl-r>        " redo
 .               " repeat last edit
+{count}.        " repeat last edit {count} times
 ```
 ```vim
 x               " delete a single character (on cursor)
@@ -150,6 +159,7 @@ vyxp            " transpose two letters (yank, delete and paste)
 <<              " indent current line left
 <ctrl-a>        " find number in current line and increment by 1
 <ctrl-x>        " find number in current line and decrement by 1
+{count}:        " will translate {count} to :{range} in ex mode
 ```
 
 **Notes:**
@@ -188,7 +198,7 @@ x               " delete (cut) character
 "+p             " paste the `+` register (the clipboard)
 "{reg}p         " paste {reg} (:registers)
 "{reg}yy        " yank current line into {reg} (:registers)
-"_dd            " delete line into the "blackhole" register (no clipboard)
+"_dd            " delete line into the 'blackhole' register (no clipboard)
 ```
 Copy paste using ex mode:
 ```vim
@@ -207,6 +217,19 @@ Copy paste using ex mode:
 ```vim
     nnoremap Y y$
     xnoremap Y <Esc>y$gv
+```
+
+- By default all modification operators `dcx` copy the modified text to the unnamed `"` register (unless `set clipboard` was set) which can be confusing at first. For example, let's say we want to overwrite a word with yanked text, we would naturally do `ciw<Esc>p` or `ciw<ctrl-r>"` only to find out the same word would be pasted (and not our yanked text), to work around that we can tell the `c` operator to copy the text into the 'blackhole' register instead: `"_ciw`. A few useful mappings for my leader key (by default `\`, personally I use `\<space>`) are below, so if I want to change a word without it polluting my registers I would run `<leader>bciw`, similarly if I wish to delete a line I would run `<leader>dd`:
+
+```vim
+    nnoremap <leader>b "_
+    nnoremap <leader>d "_d
+    nnoremap <leader>D "_D
+    nnoremap <leader>dd "_dd
+    xnoremap <leader>b "_
+    xnoremap <leader>D "_D
+    xnoremap <leader>D "_D
+    xnoremap <leader>x "_x
 ```
 
 ## <a id="text-objects">Text Objects</a></a>
@@ -492,4 +515,15 @@ The expression register (`=`) is used to evaluate expressions and can be accesse
 "={expr}P                   " save as above, paste before the cursor
 ```
 
-**NOTE:** For more information on evaluating expressions `:help expression`. For even more information read [Aaron Bieber's: Master Vim Registers With Ctrl R](https://blog.aaronbieber.com/2013/12/03/master-vim-registers-with-ctrl-r.html) and watch [Vimcasts: Simple calculations with Vim's expression register calculations with Vim's expression register](http://vimcasts.org/episodes/simple-calculations-with-vims-expression-register/)
+**Notes:**
+- For more information on evaluating expressions `:help expression`. For even more information read [Aaron Bieber's: Master Vim Registers With Ctrl R](https://blog.aaronbieber.com/2013/12/03/master-vim-registers-with-ctrl-r.html) and watch [Vimcasts: Simple calculations with Vim's expression register calculations with Vim's expression register](http://vimcasts.org/episodes/simple-calculations-with-vims-expression-register/)
+
+- When inserting a register with `<ctrl-r>{reg}` and then repeating the edit with `.` you will find out that same text will be entered even if the register contents has changed, to have the actual command enter the `.` register we need to use `<ctrl-r><ctrl-o>{reg}` instead. Best shown with an example, say we have the below text and we wish to add parens around the text
+
+```vim
+    one           " we want to change this to => (one)
+    two           " we want to change this to => (two)
+```
+
+  We can modify the first line using `ciw(<ctrl-r>+)` which will result in "(one)" but when we repeat the action for "two" the result would still be "(one)" as the actual text is saved in the register. To circumvent this we can use `ciw(<ctrl-r><ctrl-o>+)` instead which inserts the actual command `^R^O+` into the register, that way when we repeat the action with `.` the result would be as expected "(two)".
+
